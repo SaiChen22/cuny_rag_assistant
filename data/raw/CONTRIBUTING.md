@@ -39,23 +39,23 @@ Monda   → graduation + eval question set
 ## Setup
 
 1. Create a virtual environment:
-   python -m venv venv
+   ```python -m venv venv```
    or
-   python3 -m venv venv
+   ```python3 -m venv venv```
 
 2. Activate it:
-   Mac/Linux:  source venv/bin/activate
-   Windows:    venv\Scripts\activate
+   Mac/Linux:  ```source venv/bin/activate```
+   Windows:    ```venv\Scripts\activate```
 
 3. Install dependencies:
-   pip install -r requirements.txt
+   ```pip install -r requirements.txt```
 
 ## Important Notes
 
 - Run the script from the root of the repo, not from inside any subfolder:
-    python scraper.py
+    ```python scraper.py```
     or
-    python3 scraper.py
+    ```python3 scraper.py```
 - Do NOT push scraper.py to the repo—only push your JSON output files
 - Do NOT push your venv folder (it is already in .gitignore)
 - The JSON output will be automatically saved to data/raw/[your_category]/
@@ -85,9 +85,11 @@ Monda   → graduation + eval question set
 
 5. Commit and push your JSON files to the repo
    - Only add your JSON files, do not use git add . as it may catch unintended files:
+       ```
        git add data/raw/[your_category]/[your_file].json
        git commit -m "add [topic] [category] data"
        git push
+       ```
 
 ## Definition of Done
 
@@ -108,9 +110,11 @@ The sheet has the following columns:
 question | expected_answer | category | college | notes
 
 Write 25-30 realistic questions a CUNY student might actually ask.
+```
 Examples: "How do I apply for financial aid at Lehman College?"
           "What GPA do I need to graduate from Hunter?"
           "Can I transfer credits from a community college to Baruch?"
+```
 
 Aim for a mix of colleges and categories. Expected answers can be rough,
 not exact: we just need to know what a good answer looks like.
