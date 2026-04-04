@@ -28,12 +28,13 @@ financial_aid, tuition_and_fees, admissions, transfer, degree_requirements,
 graduation, academic_policies, registration_enrollment, advising, campus_resources
 
 ## Week 3 Assignments
-
+```
 Sai     → financial_aid, tuition_and_fees
 Roland  → transfer, registration_enrollment
 Aleksia → admissions, degree_requirements
 Patrick → academic_policies, campus_resources, advising
 Monda   → graduation + eval question set
+```
 
 ## Setup
 
