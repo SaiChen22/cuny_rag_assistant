@@ -7,7 +7,11 @@ import time
 
 def scrape_page(url, title, college, category, section=""):
     try:
-        headers = {"User-Agent": "Mozilla/5.0"}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xhtml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+        }
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
@@ -55,13 +59,12 @@ def save_documents(documents, category):
 
 pages_to_scrape = [
     {
-        "url": "https://enrollmentmanagement.baruch.cuny.edu/financial-aid-services/financial-aid-work-study-program/",
-        "title": "Federal Work-Study Program",
-        "college": "Baruch College",
+        "url": "https://www.ccny.cuny.edu/financialaid",
+        "title": "Test City College",
+        "college": "City College",
         "category": "financial_aid",
         "section": ""
     },
-    # add more pages here...
 ]
 
 # ---------------------------------------------------------------
