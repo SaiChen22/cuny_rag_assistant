@@ -27,11 +27,11 @@ CATEGORIES (use exactly as written):
 financial_aid, tuition_and_fees, admissions, transfer, degree_requirements,
 graduation, academic_policies, registration_enrollment, advising, campus_resources
 
-## Week 3 Assignments
+## Week 3—4 Assignments
 ```
 Sai     → financial_aid, tuition_and_fees
 Roland  → transfer, registration_enrollment
-Aleksia → admissions, degree_requirements
+Aleksia → admissions, degree_requirements + eval question set
 Patrick → academic_policies, campus_resources, advising
 Monda   → graduation + eval question set
 ```
@@ -58,8 +58,7 @@ Monda   → graduation + eval question set
     ```python3 scraper.py```
 - Do NOT push scraper.py to the repo—only push your JSON output files
 - Do NOT push your venv folder (it is already in .gitignore)
-- The JSON output will be automatically saved to data/raw/[your_category]/
-
+  
 ## Instructions
 
 1. Find the relevant pages for your assigned categories across all 11 colleges
@@ -80,7 +79,17 @@ Monda   → graduation + eval question set
 
 4. Rename the output file to match the topic before running the script again,
    or it will be overwritten
-   - e.g. work_study.json, fafsa.json — not financial_aid.json or baruch.json
+   - Each file should cover ONE specific topic only — this is important for retrieval
+     quality. Topically focused files mean each chunk will be semantically coherent.
+     Mixing topics in one file confuses the retriever and degrades system performance.
+   - Name files after the topic: e.g. work_study.json, fafsa.json, tap.json
+   - If a topic is specific to one college, you can use college_topic.json
+     e.g. baruch_scholarships.json — but topic-first naming is preferred when
+     you have pages from multiple colleges on the same subject
+   - Do NOT name files after the college or category:
+     e.g. NOT baruch.json, NOT financial_aid.json
+   - Titles within each file should be descriptive and distinct from each other.
+     e.g. "Federal Work-Study at Baruch", not just "Financial Aid" or "Admissions"
    - Verify it is saved in data/raw/[your_category]/
 
 5. Commit and push your JSON files to the repo
@@ -94,14 +103,16 @@ Monda   → graduation + eval question set
 ## Definition of Done
 
 - Your JSON files are in the correct category folder
+- Each file covers exactly one topic — multiple files per category is expected (and encouraged)
 - You have covered all 11 colleges for your categories where pages exist
-- Each file is named descriptively after the topic, not the college
-  e.g. work_study.json, fafsa.json — not baruch.json
+- Each file is named descriptively after the topic, not the college or category
+  e.g. work_study.json, fafsa.json — not baruch.json or financial_aid.json
+- Titles within files are descriptive and distinct from each other
 - The text fields are clean and readable
 - college and category fields match the controlled vocabulary exactly
 - All files are committed and pushed before our next meeting
 
-## Monda: Eval Question Set
+## Monda & Aleksia: Eval Question Set
 
 In addition to your scraping categories, you will be building our evaluation
 question set in this [Google Sheet](https://docs.google.com/spreadsheets/d/1UR0T-FlzR837CaEL-gw8FnTcG7h6Irh0PDU1yESdEVA/edit?usp=sharing)
