@@ -15,7 +15,7 @@ Sai     → Vector store (ChromaDB setup + ingestion + query interface)
 Roland  → Chunking pipeline
 Aleksia → Embedding pipeline, then support Sai on vector store when done
 Patrick → Chunking pipeline (paired with Roland)
-Monda   → Evaluation prep (question set + retrieval test harness)
+Monda   → Evaluation prep (question set + start on eval_retrieval.py)
 ```
 
 ---
