@@ -12,6 +12,7 @@ from sentence_transformers import SentenceTransformer
 CHROMA_DIR = Path("data/chromadb")
 COLLECTION_NAME = "cuny_rag"
 DEFAULT_EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+DEFAULT_EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu")
 
 
 def _get_collection(chroma_dir: Path = CHROMA_DIR, collection_name: str = COLLECTION_NAME):
@@ -42,7 +43,11 @@ def retrieve(query: str, n_results: int = 5, filters: dict | None = None) -> lis
     """
     collection = _get_collection()
     
-    model = SentenceTransformer(DEFAULT_EMBEDDING_MODEL)
+    # Default to CPU to avoid CUDA runtime failures on older or unsupported GPUs.
+    model = SentenceTransformer(
+        DEFAULT_EMBEDDING_MODEL,
+        device=DEFAULT_EMBEDDING_DEVICE,
+    )
     query_embedding = model.encode(query).tolist()
 
     query_kwargs: dict[str, Any] = {
