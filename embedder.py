@@ -48,21 +48,34 @@ def embed_chunks() -> int:
     for file_path in files:
         chunks = _read_chunks(file_path)
 
-        texts = [chunk["text"] for chunk in chunks]
+        valid_chunks = []
+
+        for chunk in chunks:
+            text = chunk.get("text", "")
+            if isinstance(text, str) and text.strip():
+                valid_chunks.append(chunk)
+            else:
+                print(f"Skipping chunk with missing/empty text in {file_path}")
+
+        if not valid_chunks:
+            print(f"No valid chunks found in {file_path}")
+            continue
+
+        texts = [chunk["text"] for chunk in valid_chunks]
 
         embeddings = model.encode(texts).tolist()
 
-        for chunk, embedding in zip(chunks, embeddings):
+        for chunk, embedding in zip(valid_chunks, embeddings):
             chunk["embedding"] = embedding
 
         output_path = EMBEDDINGS_DIR / file_path.name
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         with output_path.open("w", encoding="utf-8") as f:
-            json.dump(chunks, f, indent=2)
+            json.dump(valid_chunks, f, indent=2)
 
-        print(f"Embedded {len(chunks)} chunks from {file_path}")
-        total += len(chunks)
+        print(f"Embedded {len(valid_chunks)} chunks from {file_path}")
+        total += len(valid_chunks)
 
     print(f"Finished embedding {total} chunks.")
     return total
