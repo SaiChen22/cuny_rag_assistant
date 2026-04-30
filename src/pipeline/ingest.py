@@ -87,10 +87,16 @@ def ingest(
         collection.upsert(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadatas)
         ids, documents, embeddings, metadatas = [], [], [], []
 
+    skipped = 0
     for file_path in files:
         chunks = _read_chunks(file_path)
         for chunk in chunks:
-            chunk_id, text, embedding, metadata = _chunk_to_chroma_item(chunk, file_path)
+            try:
+                chunk_id, text, embedding, metadata = _chunk_to_chroma_item(chunk, file_path)
+            except ValueError as e:
+                print(f"[skip] {e}")
+                skipped += 1
+                continue
             ids.append(chunk_id)
             documents.append(text)
             embeddings.append(embedding)
@@ -101,7 +107,7 @@ def ingest(
                 flush()
 
     flush()
-    print(f"Ingested/upserted {total} chunks into '{collection_name}'")
+    print(f"Ingested/upserted {total} chunks into '{collection_name}' ({skipped} skipped)")
     return total
 
 
