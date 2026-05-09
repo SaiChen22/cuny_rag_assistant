@@ -1,9 +1,9 @@
 """FastAPI service exposing the CUNY RAG generator over HTTP.
 
 Run as a background process:
-    ./.venv/bin/python serve.py &
+    ./.venv/bin/python backend/serve.py &
 or with logging captured:
-    nohup ./.venv/bin/python serve.py >serve.log 2>&1 &
+    nohup ./.venv/bin/python backend/serve.py >serve.log 2>&1 &
 
 The lifespan startup hook pre-loads the embedding model and BM25 index so the
 first request hits warm caches.
@@ -18,9 +18,9 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-# Run with this file's directory as cwd so retriever.py's relative paths
+# Run with the repository root as cwd so retriever.py's relative paths
 # (data/chromadb, data/embeddings) resolve correctly regardless of launch dir.
-_PROJECT_ROOT = Path(__file__).resolve().parent
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
 os.chdir(_PROJECT_ROOT)
 
 # Make src/pipeline modules importable.
@@ -95,4 +95,4 @@ def ask(request: AskRequest) -> dict[str, Any]:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
-    uvicorn.run("serve:app", host="127.0.0.1", port=8000, reload=False)
+    uvicorn.run(app, host="127.0.0.1", port=8000, reload=False)
