@@ -36,7 +36,7 @@ def embed_chunks() -> int:
         print("No data/chunks directory found.")
         return 0
 
-    model = SentenceTransformer(MODEL_NAME)
+    model = SentenceTransformer(MODEL_NAME, device="cpu")
 
     files = _iter_chunk_files(CHUNKS_DIR)
     if not files:
