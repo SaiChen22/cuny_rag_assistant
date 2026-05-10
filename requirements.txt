@@ -3,3 +3,8 @@ beautifulsoup4
 chromadb
 sentence-transformers
 rank-bm25
+openai
+tiktoken
+python-dotenv
+fastapi
+uvicorn[standard]

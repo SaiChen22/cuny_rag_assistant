@@ -57,7 +57,16 @@ def chunk_documents(documents):
 
 if __name__ == "__main__":
     categories = [
+        "academic_policies",
+        "admissions",
+        "advising",
+        "campus_resources",
+        "degree_requirements",
+        "financial_aid",
+        "graduation",
         "registration_enrollment",
+        "transfer",
+        "tuition_and_fees",
     ]
     for category in categories:
         process_category(category)

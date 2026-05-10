@@ -18,6 +18,26 @@ DEFAULT_EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu")
 # Module-level cache: built once on first retrieve() call, reused thereafter.
 _bm25_index: BM25Okapi | None = None
 _bm25_corpus: list[dict[str, Any]] | None = None  # [{id, text, metadata}, ...]
+_embedding_model: SentenceTransformer | None = None
+
+
+def _get_embedding_model() -> SentenceTransformer:
+    """Return the SentenceTransformer, loading it once on first call."""
+    global _embedding_model
+    if _embedding_model is None:
+        _embedding_model = SentenceTransformer(
+            DEFAULT_EMBEDDING_MODEL, device=DEFAULT_EMBEDDING_DEVICE
+        )
+    return _embedding_model
+
+
+def warmup() -> None:
+    """Pre-load embedding model and BM25 index so the first retrieve() is fast.
+
+    Safe to call multiple times — both helpers are idempotent.
+    """
+    _get_embedding_model()
+    _ = _get_bm25_index()
 
 
 def _get_collection(chroma_dir: Path = CHROMA_DIR, collection_name: str = COLLECTION_NAME):
@@ -110,7 +130,8 @@ def retrieve(query: str, n_results: int = 5, filters: dict[str, Any] | None = No
     # --- Dense search: embed query, retrieve top fetch_k doc IDs from ChromaDB ---
     collection = _get_collection()
     # Default to CPU to avoid CUDA runtime failures on older or unsupported GPUs.
-    model = SentenceTransformer(DEFAULT_EMBEDDING_MODEL, device=DEFAULT_EMBEDDING_DEVICE)
+    # Cached at module level so the model is loaded only once across requests.
+    model = _get_embedding_model()
     query_embedding = model.encode(query).tolist()
 
     dense_kwargs: dict[str, Any] = {
