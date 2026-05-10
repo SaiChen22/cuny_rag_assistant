@@ -37,3 +37,24 @@ By default the frontend runs on `http://localhost:5173` and is allowed by the ba
 
 - The backend warms the retriever on startup so the first request is faster.
 - The server expects the generated data and embeddings already present under `data/`.
+
+## Pipeline
+
+A unified data pipeline is provided at `src/pipeline/pipeline.py` that runs three sequential stages:
+
+- Chunking: reads raw JSON from `data/raw/` and writes tokenized chunks to `data/chunks/`.
+- Embedding: generates vector embeddings for each chunk and saves them to `data/embeddings/`.
+- Ingestion: upserts embeddings and metadata into a ChromaDB database stored in `data/chromadb/`.
+
+Run the full pipeline from the repository root:
+
+```bash
+python src/pipeline/pipeline.py
+```
+
+Useful options:
+
+- `--keep-chunks` and `--keep-embeddings` to preserve existing data directories.
+- `--model` to override the sentence-transformers model (default: `all-MiniLM-L6-v2`).
+
+See `PIPELINE.md` for a detailed guide and examples.
