@@ -4,19 +4,9 @@ A retrieval-augmented generation (RAG) system that answers CUNY student question
 
 ## Architecture
 
-```
-data/raw/*.json  →  chunker  →  data/chunks/
-                                      ↓
-                               embedder  →  data/embeddings/
-                                                  ↓
-                                            ingest  →  data/chromadb/
-                                                              ↑
-User → React (Vite :5173) → FastAPI (:8000) → retriever (Dense + BM25 + RRF)
-                                  ↓
-                             OpenAI API  →  citation answer
-```
+![CUNY RAG Assistant architecture diagram](arch/arch-preview.png)
 
-See [`arch/cuny-rag-assistant.architecture.html`](arch/cuny-rag-assistant.architecture.html) for an interactive diagram (open locally in a browser).
+> Interactive version: open [`arch/cuny-rag-assistant.architecture.html`](arch/cuny-rag-assistant.architecture.html) locally for dark/light theme, guided views, and search.
 
 ## Data coverage
 
