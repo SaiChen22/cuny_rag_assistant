@@ -86,6 +86,16 @@ def _bm25_search(query: str, n: int, filters: dict[str, Any] | None) -> list[str
     return [corpus[ranked[i]]["id"] for i in range(min(n, len(ranked)))]
 
 
+def _build_where_clause(filters: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Convert plain metadata filters into a ChromaDB where clause."""
+    if not filters:
+        return None
+    if len(filters) == 1:
+        key, value = next(iter(filters.items()))
+        return {key: value}
+    return {"$and": [{key: value} for key, value in filters.items()]}
+
+
 def _reciprocal_rank_fusion(ranked_lists: list[list[str]], k: int = 60) -> list[str]:
     """
     Merge multiple ranked lists of doc IDs using Reciprocal Rank Fusion.
@@ -139,8 +149,9 @@ def retrieve(query: str, n_results: int = 5, filters: dict[str, Any] | None = No
         "n_results": fetch_k,
         "include": ["documents", "metadatas"],
     }
-    if filters:
-        dense_kwargs["where"] = filters
+    where_clause = _build_where_clause(filters)
+    if where_clause:
+        dense_kwargs["where"] = where_clause
 
     dense_result = collection.query(**dense_kwargs)
     dense_ids: list[str] = (dense_result.get("ids") or [[]])[0]

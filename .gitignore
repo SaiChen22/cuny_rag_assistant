@@ -1,9 +1,14 @@
 .venv/
 venv/
 data/chromadb/
+data/chunks/
+data/embeddings/
 .env
 .gitignore
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+CLAUDE.md
+repomix-output.md
+script.md

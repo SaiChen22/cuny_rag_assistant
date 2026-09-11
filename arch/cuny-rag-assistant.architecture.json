@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CUNY RAG Assistant",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "query-path",
+        "label": "Query path",
+        "focus": ["browser", "frontend", "api", "retriever", "chroma", "bm25", "openai"],
+        "note": "User question → FastAPI → Hybrid Retriever merges dense + BM25 via RRF, then Generator sends context to OpenAI."
+      },
+      {
+        "id": "ingestion",
+        "label": "Ingestion pipeline",
+        "focus": ["raw_data", "chunker", "embedder", "ingest", "chroma"],
+        "note": "Raw CUNY JSON is chunked at 400 tokens, embedded with all-MiniLM-L6-v2, and upserted into ChromaDB before any query can be served."
+      }
+    ]
+  },
+  "components": [
+    { "id": "browser",   "type": "external",  "label": "User",             "sublabel": "Browser",               "pos": [30,  250], "size": [120, 64] },
+    { "id": "frontend",  "type": "frontend",  "label": "React App",        "sublabel": "Vite :5173",             "pos": [210, 250], "size": [140, 64] },
+    { "id": "api",       "type": "backend",   "label": "FastAPI",          "sublabel": ":8000 / Generator",      "pos": [430, 250], "size": [150, 64] },
+    { "id": "openai",    "type": "cloud",     "label": "OpenAI API",       "sublabel": "gpt-4o-mini",            "pos": [820, 185], "size": [140, 60] },
+    { "id": "retriever", "type": "backend",   "label": "Hybrid Retriever", "sublabel": "Dense + BM25 + RRF",     "pos": [430, 390], "size": [150, 64] },
+    { "id": "chroma",    "type": "database",  "label": "ChromaDB",         "sublabel": "vector store",           "pos": [690, 330], "size": [140, 60] },
+    { "id": "bm25",      "type": "database",  "label": "BM25 Index",       "sublabel": "in-memory",              "pos": [690, 440], "size": [140, 60] },
+    { "id": "raw_data",  "type": "external",  "label": "Raw JSON",         "sublabel": "scraped CUNY data",      "pos": [30,  585], "size": [130, 60] },
+    { "id": "chunker",   "type": "backend",   "label": "Chunker",          "sublabel": "400-tok / 50 overlap",   "pos": [210, 585], "size": [130, 60] },
+    { "id": "embedder",  "type": "backend",   "label": "Embedder",         "sublabel": "all-MiniLM-L6-v2",       "pos": [400, 585], "size": [130, 60] },
+    { "id": "ingest",    "type": "backend",   "label": "Ingest",           "sublabel": "upsert cuny_rag",        "pos": [660, 585], "size": [140, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region",         "label": "Backend Service",    "wraps": ["api", "retriever"] },
+    { "kind": "region",         "label": "Ingestion Pipeline", "wraps": ["chunker", "embedder", "ingest"] },
+    { "kind": "security-group", "label": "Data Stores",        "wraps": ["chroma", "bm25"] }
+  ],
+  "connections": [
+    { "id": "user-to-frontend",    "from": "browser",   "to": "frontend",  "label": "HTTPS" },
+    { "id": "frontend-to-api",     "from": "frontend",  "to": "api",       "label": "POST /api/ask",    "variant": "emphasis" },
+    { "id": "api-to-retriever",    "from": "api",       "to": "retriever", "label": "retrieve()",       "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "api-to-openai",       "from": "api",       "to": "openai",    "label": "chat completion",  "fromSide": "right",  "toSide": "left" },
+    { "id": "retriever-to-chroma", "from": "retriever", "to": "chroma",    "label": "dense search",     "fromSide": "right",  "toSide": "left" },
+    { "id": "retriever-to-bm25",   "from": "retriever", "to": "bm25",      "label": "keyword search",   "fromSide": "right",  "toSide": "left" },
+    { "id": "chroma-to-bm25",      "from": "chroma",    "to": "bm25",      "label": "corpus load",      "variant": "dashed",  "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "raw-to-chunker",      "from": "raw_data",  "to": "chunker",   "label": "JSON docs" },
+    { "id": "chunker-to-embedder", "from": "chunker",   "to": "embedder",  "label": "chunks" },
+    { "id": "embedder-to-ingest",  "from": "embedder",  "to": "ingest",    "label": "embeddings" },
+    { "id": "ingest-to-chroma",    "from": "ingest",    "to": "chroma",    "label": "upsert",           "fromSide": "right",  "toSide": "right", "via": [[870, 615], [870, 360]] }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Query Path",
+      "items": [
+        "React frontend posts to FastAPI /api/ask",
+        "Hybrid retriever merges dense + BM25 via RRF (k=60)",
+        "Retrieved chunks sent to OpenAI for citation-aware answer"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Ingestion Pipeline",
+      "items": [
+        "Raw CUNY JSON chunked at 400 tokens / 50-token overlap",
+        "Embedded with all-MiniLM-L6-v2 (384-dim, CPU)",
+        "Upserted into ChromaDB collection cuny_rag in batches of 256"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Hybrid Retrieval",
+      "items": [
+        "Dense: ChromaDB cosine similarity over 384-dim vectors",
+        "Sparse: BM25Okapi over full in-memory corpus (loaded at warmup)",
+        "Merged with Reciprocal Rank Fusion — k=60"
+      ]
+    }
+  ]
+}
