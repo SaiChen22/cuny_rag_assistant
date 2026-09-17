@@ -1,2 +1,4 @@
-arch/*
 
+arch/*.html linguist-vendored
+
+arch/cuny-rag-assistant.architecture.html linguist-generated=true
